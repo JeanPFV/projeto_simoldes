@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'login/login.css' %}" />
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo">
+        <img src="static/imagens/Simoldes-Acos-Brasil.png" alt="Logo" />
+      </div>
+      <h2>Bem vindo!</h2>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="input-group">
+          <input type="text" placeholder="Usuário" required />
+        </div>
+        <div class="input-group">
+          <input type="password" placeholder="Senha" required />
+        </div>
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!-- templates/visualizador/preview.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizador de Peças STEP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .item {
+            text-align: center;
+        }
+        .item img {
+            width: 150px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .item img:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pré-visualização de Modelos STEP</h1>
+    <div class="grid">
+        {% for preview in previews %}
+            <div style="margin: 10px; display: inline-block; text-align: center;">
+                <a href="{{ preview.imagem_url }}" target="_blank">
+                    <img src="{{ preview.imagem_url }}" alt="{{ preview.nome }}" width="200">
+                </a>
+                <p>{{ preview.nome }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

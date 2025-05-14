@@ -1,0 +1,93 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Moldes em Progresso</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'tela_principal/principal.css' %}">
+
+</head>
+<body>
+  <header>
+    <h1>Moldes em Progresso</h1>
+    <img src="static/imagens/Simoldes-Acos-Brasil.png" alt="Simoldes Aços Logo" class="logo">
+  </header>
+
+ <div class="container">
+  <aside class="sidebar">
+    <ul>
+      <li>1678</li>
+      <li>1679</li>
+      <li>1680</li>
+      <li>1681</li>
+      <li>1682</li>
+      <li>1683</li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="search-bar">
+      <input type="text" placeholder="Pesquisar">
+    </div>
+
+    <div class="action-buttons">
+      <button class="green-button">Ver projeto na pasta</button>
+      <button class="green-button">Checklist maquinação</button>
+      <button class="green-button save">Salvar alterações</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Item</th>
+          <th>Descrição</th>
+          <th>Molde 3D</th>
+          <th>Chegada aço</th>
+          <th>Quantidade aço</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Mesmos dados da tabela anterior -->
+        <tr>
+          <td></td>
+          <td><strong>100</strong></td>
+          <td><strong>CAVIDADE</strong></td>
+          <td class="center">Sim</td>
+          <td class="center">Sim</td>
+          <td class="center">1</td>
+          <td class="ativo">Ativo(a)</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><strong>200</strong></td>
+          <td>PARAFUSO DE CABEÇA<br>CILÍNDRICA COM<br>SEXTAVADO INTERIOR</td>
+          <td class="center">Não</td>
+          <td class="center">Não</td>
+          <td class="center"></td>
+          <td class="ativo">Ativo(a)</td>
+        </tr>
+        <tr>
+          <td><img src="/media/modelos/previews/cylinder_block.jpeg" alt="cilindro" width="80" /></td>
+          <td><strong>600B</strong></td>
+          <td>OUTROS</td>
+          <td class="center">Sim</td>
+          <td class="center">Sim</td>
+          <td class="center">1</td>
+          <td class="ativo">Ativo(a)</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><strong>1</strong></td>
+          <td><strong>CAVIDADE</strong></td>
+          <td class="center">Sim</td>
+          <td class="center">Sim</td>
+          <td class="center">1</td>
+          <td class="ativo">Ativo(a)</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</div>
