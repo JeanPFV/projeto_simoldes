@@ -20,12 +20,13 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from webapp.views import listar_modelos_step, pagina_principal, login
+from webapp.views import listar_modelos_step, pagina_principal, login, checklist
 
 urlpatterns = [
     path('modelos', listar_modelos_step, name='listar_modelos_step'),
     path('', login, name ='login'),
-    path('checklist', pagina_principal, name='pagina_principal')
+    path('pagina_principal', pagina_principal, name='pagina_principal'),
+    path('checklist', checklist, name='checklist')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

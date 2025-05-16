@@ -21,6 +21,7 @@ def gerar_preview_stp_para_png(caminho_stp, caminho_png):
     # Exibe a forma e salva diretamente no caminho da imagem
     renderer.DisplayShape(
         shapes=shape,
+        transparency=0.7,
         dump_image=True,
         dump_image_path=os.path.dirname(caminho_png),
         dump_image_filename=os.path.basename(caminho_png)
@@ -72,4 +73,8 @@ def pagina_principal(request):
 
     pode_editar = (usuario == 'admin')
     
-    return render(request, 'tela_principal\principal.html', {'pode_editar': pode_editar})
+    return render(request, 'tela_principal/principal.html', {'pode_editar': pode_editar})
+
+def checklist(request):
+    
+    return render(request, 'checklist/checklist.html')
