@@ -27,6 +27,4 @@ urlpatterns = [
     path('', login, name ='login'),
     path('pagina_principal', pagina_principal, name='pagina_principal'),
     path('checklist', checklist, name='checklist')
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)# Vê se a pasta MEDIA existe
