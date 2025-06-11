@@ -85,6 +85,17 @@ th, td {
   text-align: center;
 }
 
+.zoom-img {
+  transition: transform 0.3s ease;
+  display: block;
+  margin: auto;
+}
+
+.zoom-img:hover {
+  transform: scale(6); /* aumenta o tamanho em 6x */
+  z-index: 10;
+}
+
 .ativo {
   color: #2e5f4d;
   font-weight: bold;

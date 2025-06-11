@@ -17,10 +17,10 @@
       <form method="POST">
         {% csrf_token %}
         <div class="input-group">
-          <input type="text" placeholder="Usuário" required />
+          <input type="text" name="username" placeholder="Usuário" required />
         </div>
         <div class="input-group">
-          <input type="password" placeholder="Senha" required />
+          <input type="password" name="password" placeholder="Senha" required />
         </div>
         </div>
         <button type="submit">Entrar</button>

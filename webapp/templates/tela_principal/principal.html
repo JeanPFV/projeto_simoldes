@@ -10,6 +10,18 @@
 </head>
 <body>
   <header>
+    <p>Bem-vindo, {{ usuario }}!</p>
+
+  {% if permissao == 'admin' %}
+    <p>Você é administrador. Tem acesso total.</p>
+  {% elif permissao == 'nivel_3' %}
+    <p>Você pode ver modelos, evolução e status por máquina.</p>
+  {% elif permissao == 'nivel_2' %}
+    <p>Você pode ver modelos 3D e chegada dos aços.</p>
+  {% elif permissao == 'nivel_1' %}
+    <p>Você pode ver apenas chegada dos aços.</p>
+  {% endif %}
+  
     <h1>Moldes em Progresso</h1>
     <img src="static/imagens/Simoldes-Acos-Brasil.png" alt="Simoldes Aços Logo" class="logo">
   </header>
@@ -70,7 +82,7 @@
           <td class="ativo">Ativo(a)</td>
         </tr>
         <tr>
-          <td><img src="/media/modelos/previews/cylinder_block.jpeg" alt="cilindro" width="80" /></td>
+          <td><img src="/media/modelos/previews/cylinder_block.jpeg" alt="cilindro" class="zoom-img" width="80" /></td>
           <td><strong>600B</strong></td>
           <td>OUTROS</td>
           <td class="center">Sim</td>

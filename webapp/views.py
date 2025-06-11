@@ -2,6 +2,7 @@ import os
 from django.conf import settings
 from django.shortcuts import render, redirect
 from multiprocessing import Pool, cpu_count
+from .dict import USUARIOS
 
 # Bibliotecas da OCC (OpenCascade) para ler arquivos STEP e renderizar imagens
 from OCC.Core.STEPControl import STEPControl_Reader
@@ -87,30 +88,31 @@ def listar_modelos_step(request):
 
 # Metodo de Login
 def login(request):
-    
-    # pega o login e senha
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
+        username = request.POST.get('username', '').lower().strip()
         password = request.POST.get('password', '').strip()
 
-        # é pra pegar o nome e senha, ver se é identica e dai dá acesso
-        if username == 'admin' and password == '1234':
-            request.session['usuario'] = 'admin'
-        else:
-            request.session['usuario'] = 'visualizador'
-            
-        return redirect('pagina_principal')
+        dados = USUARIOS.get(username)
+
+        if dados and password == dados['senha']:
+            request.session['usuario'] = username
+            request.session['permissao'] = dados['permissao']
+            return redirect('pagina_principal')
+
+        return render(request, 'login/login.html', {'erro': 'Usuário ou senha inválidos'})
 
     return render(request, 'login/login.html')
 
 # funcao para aparecer a tela incial
 def pagina_principal(request):
     
-    #ve se o usuario pode editar(usuario) ou nao(visualizador)
-    usuario = request.session.get('usuario', 'visualizador')
-    pode_editar = (usuario == 'admin')
-    
-    return render(request, 'tela_principal/principal.html', {'pode_editar': pode_editar})
+    usuario = request.session.get('usuario')
+    permissao = request.session.get('permissao')
+
+    return render(request, 'tela_principal/principal.html', {
+        'usuario': usuario,
+        'permissao': permissao
+    })
 
 # puxar a checklist
 def checklist(request):
