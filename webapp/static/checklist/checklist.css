@@ -19,6 +19,16 @@ header h1{
   font-size: 140%;
 }
 
+.white-button {
+  background-color: white;
+  color: #2e5f4d;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 .logo {
   height: 40px;
 }

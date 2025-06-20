@@ -24,6 +24,7 @@ from webapp.views import listar_modelos_step, pagina_principal, login, checklist
 
 urlpatterns = [
     path('modelos', listar_modelos_step, name='listar_modelos_step'),
+    path('login', login, name ='login'),
     path('', login, name ='login'),
     # path('pagina_principal', pagina_principal, name='pagina_principal'),
     path('checklist', checklist, name='checklist'),
