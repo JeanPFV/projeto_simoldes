@@ -52,10 +52,13 @@
         {% csrf_token %}
         <input type="hidden" name="nome_aba" value="{{ aba }}">
         <div class="action-buttons">
+        {% if permissao == 'nivel_3' or  permissao == 'admin'%}
           <a href="/checklist/{{aba}}">
             <button type="button" class="green-button">Checklist maquinação</button>
           </a>
+          
             <button type="submit" class="green-button save">Salvar Alterações</button>
+        {% endif %}
         </div>
 
         <table>
@@ -64,7 +67,7 @@
             <th>Imagem</th>
             <th>Status</th>
             <th>Chegada Aço</th>
-            <th>Programa</th>
+            {% if permissao != permissao == 'nivel_1'%}<th>Programa</th>{% endif %}
           </tr>
 
           {% for dado in dados %}
@@ -82,13 +85,14 @@
                 <span class="checkmark"></span>
               </label>
             </td>
-
+            {% if permissao != permissao == 'nivel_1'%}
             <td>
               <label class="checkbox-container">
                 <input type="checkbox" name="programa_{{ dado.linha }}" {% if dado.programa %}checked{% endif %}>
                 <span class="checkmark"></span>
               </label>
             </td>
+            {% endif %}
           </tr>
           {% endfor %}
         </table>

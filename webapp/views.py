@@ -9,6 +9,10 @@ from OCC.Core.STEPControl import STEPControl_Reader
 from OCC.Core.IFSelect import IFSelect_RetDone
 from OCC.Display.OCCViewer import OffscreenRenderer
 
+# Variaveis globais
+caminho_base = r'media\modelos'
+caminho_arquivo = r'media\moldes.xlsx'
+
 # Função responsável por gerar a imagem (preview) a partir de um arquivo .stp
 def gerar_preview_stp_para_png(caminho_stp, caminho_png):
     # Cria o leitor para arquivos STEP
@@ -103,23 +107,9 @@ def login(request):
 
     return render(request, 'login/login.html')
 
-# funcao para aparecer a tela incial
-# def pagina_principal(request):
-    
-#     usuario = request.session.get('usuario')
-#     permissao = request.session.get('permissao')
-
-#     return render(request, 'tela_principal/principal.html', {
-#         'usuario': usuario,
-#         'permissao': permissao
-#     })
-
-
 
 
 def pagina_principal(request, nome_aba=None):
-    caminho_base = r'caminho da pasta'
-    caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
     elementos = []
     dados = []
     mensagem = None
@@ -192,14 +182,13 @@ def pagina_principal(request, nome_aba=None):
         'elementos': elementos,
         'dados': dados,
         'aba': nome_aba,
-        'mensagem': mensagem
+        'mensagem': mensagem,
+        'permissao': request.session.get('permissao')
     })
 
 def atualizar_status(request):
     if request.method == 'POST':
         nome_aba = request.POST.get('nome_aba')
-        caminho_base = r'caminho da pasta'
-        caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
         wb = load_workbook(caminho_arquivo)
         if nome_aba and nome_aba in wb.sheetnames:
             ws = wb[nome_aba]  # Atualiza na aba correta
@@ -226,8 +215,6 @@ def atualizar_status(request):
 
 
 def checklist(request, nome_aba=None):
-    caminho_base = r'caminho da pasta'
-    caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
     elementos = []
     dados = []
     mensagem = None
@@ -311,8 +298,6 @@ def checklist(request, nome_aba=None):
 def atualizar_status_checklist(request):
     if request.method == 'POST':
         nome_aba = request.POST.get('nome_aba')
-        caminho_base = r'caminho da pasta'
-        caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
         wb = load_workbook(caminho_arquivo)
         if nome_aba and nome_aba in wb.sheetnames:
             ws = wb[nome_aba]  # Atualiza na aba correta
