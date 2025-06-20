@@ -5,94 +5,123 @@
 <head>
   <meta charset="UTF-8">
   <title>Moldes em Progresso</title>
-  <link rel="stylesheet" href="static/checklist/checklist.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'tela_principal/principal.css' %}">
+
 </head>
 <body>
   <header>
-    <h1>Ckecklist</h1>
-    <img src="static/imagens/Simoldes-Acos-Brasil.png" alt="Simoldes Aços Logo" class="logo">
+    {% comment %} <p>Bem-vindo, {{ usuario }}!</p>
+
+  {% if permissao == 'admin' %}
+    <p>Você é administrador. Tem acesso total.</p>
+  {% elif permissao == 'nivel_3' %}
+    <p>Você pode ver modelos, evolução e status por máquina.</p>
+  {% elif permissao == 'nivel_2' %}
+    <p>Você pode ver modelos 3D e chegada dos aços.</p>
+  {% elif permissao == 'nivel_1' %}
+    <p>Você pode ver apenas chegada dos aços.</p>
+  {% endif %} {% endcomment %}
+  
+    <h1>Moldes em Progresso</h1>
+    <img src="{% static 'imagens/Simoldes-Acos-Brasil.png' %}" alt="Simoldes Aços Logo" class="logo">
   </header>
 
-  <div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li>1678</li>
-        <li>1679</li>
-        <li>1680</li>
-        <li>1681</li>
-        <li>1682</li>
-        <li>1683</li>
-      </ul>
-    </aside>
+<div class="container">
+  <aside class="sidebar">
+    <ul>
+    {% for item in elementos %}
+      <li>
+        {% if item.tipo == 'pasta' %}
+          <a href="{% url 'listar_arquivos_checklist' nome_aba=item.nome %}"> {{ item.nome }}</a>
+        {% elif item.tipo == 'erro' %}
+          ⚠️ {{ item.nome }}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  </aside>
 
-    <main class="main-content">
-      <div class="search-bar">
-        <input type="text" placeholder="Pesquisar">
-      </div>
+  <main class="main-content"> 
+    {% if mensagem %}
+      <p style="color: red;"><strong>{{ mensagem }}</strong></p>
+    {% endif %}
 
-      <div class="action-buttons">
-        <button class="green-button save">Salvar alterações</button>
-      </div>
+    {% if dados %}
+    <!-- TABELA DE CHECKBOXES COM FORMULÁRIO DJANGO -->
+      <form method="post" action="{% url 'atualizar_status_checklist' %}">
+        {% csrf_token %}
+        <input type="hidden" name="nome_aba" value="{{ aba }}">
+        <div class="action-buttons">
+          <a href="/pagina/{{aba}}">
+            <button type="button" class="green-button">Listas de processos</button>
+          </a>
+            <button type="submit" class="green-button save">Salvar Alterações</button>
+        </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th></th>
+        <table>
+          <tr id="cabecalho">
             <th>Item</th>
-            <th>DMG</th>
+            <th>Imagem</th>
+            <th>DMG	</th>
             <th>600 II</th>
             <th>800 II</th>
             <th>600 I</th>
             <th>800 I</th>
             <th>IXION II</th>
-
           </tr>
-        </thead>
-        <tbody>
+
+          {% for item in dados %}
           <tr>
-            <td></td>
-            <td><strong>100</strong></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td><strong>200</strong></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-          </tr>
+            <td>{{ item.item }}</td>
+            <td>
+              <img src="/media/modelos/previews/{{ item.item }}.png" class = "zoom-img"alt="{{ item.item }}" width="100">
+            </td>
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="maquina_1_{{ item.linha }}" {% if item.maquina_1 %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
 
-            <td></td>
-            <td><strong>1700</strong></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-          </tr>
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="maquina_2_{{ item.linha }}" {% if item.maquina_2 %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
 
-            <td></td>
-            <td><strong>300A</strong></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-            <td><label class="checkbox-container"><input type="checkbox" checked><span class="checkmark"></span></label></td>
-          </tr>
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="maquina_3_{{ item.linha }}" {% if item.maquina_3 %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
 
-        </tbody>
-      </table>
-    </main>
-  </div>
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="maquina_4_{{ item.linha }}" {% if item.maquina_4 %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
+
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="maquina_5_{{ item.linha }}" {% if item.maquina_5 %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="maquina_6_{{ item.linha }}" {% if item.maquina_6 %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </form>
+    {% endif %}
+  </main>
+</div>
 </body>
 </html>

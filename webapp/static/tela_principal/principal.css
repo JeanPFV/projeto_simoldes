@@ -2,6 +2,8 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   background-color: #f9f9f9;
+  height: 100%;
+  overflow: hidden;
 }
 
 header {
@@ -14,7 +16,7 @@ header {
   height: 50px;
 }
 
-header h1{
+header h1 {
   font-family: Arial;
   font-size: 140%;
 }
@@ -47,7 +49,9 @@ header h1{
   padding: 10px 20px;
   display: flex;
   gap: 10px;
+  justify-content: flex-end;
 }
+
 
 .green-button {
   background-color: #2e5f4d;
@@ -63,37 +67,66 @@ header h1{
   margin-left: auto;
 }
 
+#cabecalho {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+  text-align: center;
+}
+
 table {
-  width: 100%;
+  font-family: arial, sans-serif;
   border-collapse: collapse;
-  margin-top: 10px;
-  background-color: white;
+  width: 100%;
+  max-width: calc(100vw - 30px); /* margem antes do fim da tela */
+  overflow-x: auto;
+  display: table;
+  table-layout: fixed;
 }
 
-thead {
+thead, tbody {
+  display: table-row-group;
+}
+
+thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
   background-color: #ddd;
-  text-align: left;
+  text-align: center;
 }
 
-th, td {
+tbody {
+  max-height: calc(100vh - 150px); /* ajuste para altura restante */
+  overflow-y: auto;
+  display: block;
+}
+
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
   padding: 12px;
   border-bottom: 1px solid #ccc;
   vertical-align: top;
 }
 
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+tr:hover {
+  background-color: rgb(173, 193, 174);
+}
+
 .center {
   text-align: center;
-}
-
-.zoom-img {
-  transition: transform 0.3s ease;
-  display: block;
-  margin: auto;
-}
-
-.zoom-img:hover {
-  transform: scale(6); /* aumenta o tamanho em 6x */
-  z-index: 10;
 }
 
 .ativo {
@@ -135,4 +168,80 @@ th, td {
 .main-content {
   flex: 1;
   padding: 0 20px;
+  overflow-x: auto;
+}
+
+/* Checkbox estilizado */
+.checkbox-container {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.checkbox-container input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0; /* Ajustado de 20px para 0 */
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.checkbox-container:hover .checkmark {
+  background-color: #ccc;
+}
+
+.checkbox-container input:checked + .checkmark {
+  background-color: #0f9461;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked + .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.zoom-img {
+  transition: transform 0.3s ease;
+  display: block;
+  margin: auto;
+}
+
+.zoom-img:hover {
+  transform: scale(3); 
+  z-index: 10;
+}
+.sidebar a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  text-decoration: underline;
+  color: #e0e0e0;
 }

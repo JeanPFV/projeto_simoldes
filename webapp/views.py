@@ -3,7 +3,7 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from multiprocessing import Pool, cpu_count
 from .dict import USUARIOS
-
+from openpyxl import load_workbook
 # Bibliotecas da OCC (OpenCascade) para ler arquivos STEP e renderizar imagens
 from OCC.Core.STEPControl import STEPControl_Reader
 from OCC.Core.IFSelect import IFSelect_RetDone
@@ -104,17 +104,240 @@ def login(request):
     return render(request, 'login/login.html')
 
 # funcao para aparecer a tela incial
-def pagina_principal(request):
+# def pagina_principal(request):
     
-    usuario = request.session.get('usuario')
-    permissao = request.session.get('permissao')
+#     usuario = request.session.get('usuario')
+#     permissao = request.session.get('permissao')
+
+#     return render(request, 'tela_principal/principal.html', {
+#         'usuario': usuario,
+#         'permissao': permissao
+#     })
+
+
+
+
+def pagina_principal(request, nome_aba=None):
+    caminho_base = r'caminho da pasta'
+    caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
+    elementos = []
+    dados = []
+    mensagem = None
+    abas_excel = []
+
+    # Lista todas as pastas do diretório
+    try:
+        for nome in os.listdir(caminho_base):
+            caminho_completo = os.path.join(caminho_base, nome)
+            if os.path.isdir(caminho_completo):
+                elementos.append({'tipo': 'pasta', 'nome': nome})
+    except Exception as e:
+        elementos = [{'tipo': 'erro', 'nome': f"Erro: {str(e)}"}]
+
+    # Verifica e carrega abas do Excel
+    if os.path.exists(caminho_arquivo):
+        try:
+            wb = load_workbook(caminho_arquivo, data_only=True)
+            abas_excel = wb.sheetnames
+
+            if nome_aba:
+                if nome_aba in abas_excel:
+                    aba = wb[nome_aba]
+                        # Itera pelas linhas a partir da 1ª (ou 2ª se quiser pular cabeçalho)
+                    for row in aba.iter_rows(min_row=2, max_col=11):  
+                        linha_num = row[0].row  # pega o número da linha
+                        item = row[1].value
+                        chegada_aco = bool(row[4].value)
+                        programa = bool(row[4].value)
+                        maquina_1 = bool(row[5].value)
+                        maquina_2 = bool(row[6].value)
+                        maquina_3 = bool(row[7].value)
+                        maquina_4 = bool(row[8].value)
+                        maquina_5 = bool(row[9].value)  
+                        maquina_6 = bool(row[10].value)
+                        em_maquina = any([
+                            maquina_1, maquina_2, maquina_3, 
+                            maquina_4, maquina_5, maquina_6
+                        ])
+                        # Força valores booleanos para evitar erros
+                        chegada_aco = bool(row[3].value)
+                        programa = bool(row[4].value)
+
+                        # Lógica para determinar o status customizado
+                        if chegada_aco and programa and not em_maquina:
+                            status_custom = "Pronto para usinar"
+                        elif chegada_aco and programa and em_maquina:
+                            status_custom = "Usinando"
+                        elif chegada_aco and not programa:
+                            status_custom = "Aguardando programa"
+                        elif programa and not chegada_aco:
+                            status_custom = "Aguardando aço"
+                        else:
+                            status_custom = "Aguardando aço e programa"
+                        dados.append({
+                            'linha': linha_num,
+                            'item': item, 
+                            'chegada_aco': bool(chegada_aco), 
+                            'programa': bool(programa),
+                            'status_custom': status_custom
+                        })
+                else:
+                    mensagem = f"Não apresenta dados do molde '{nome_aba}'."
+        except Exception as e:
+            mensagem = f"Erro ao abrir o Excel: {e}"
+    else:
+        mensagem = "Arquivo moldes.xlsx não encontrado."
 
     return render(request, 'tela_principal/principal.html', {
-        'usuario': usuario,
-        'permissao': permissao
+        'elementos': elementos,
+        'dados': dados,
+        'aba': nome_aba,
+        'mensagem': mensagem
     })
 
-# puxar a checklist
-def checklist(request):
-    
-    return render(request, 'checklist/checklist.html')
+def atualizar_status(request):
+    if request.method == 'POST':
+        nome_aba = request.POST.get('nome_aba')
+        caminho_base = r'caminho da pasta'
+        caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
+        wb = load_workbook(caminho_arquivo)
+        if nome_aba and nome_aba in wb.sheetnames:
+            ws = wb[nome_aba]  # Atualiza na aba correta
+        else:
+            ws = wb.active  # Fallback se algo der errado
+            
+        for row in ws.iter_rows(min_row=2, max_col=6):  # base para pegar linha
+            linha_num = row[0].row
+            #Campos e colunas de cada item
+            campos = {
+                'chegada_aco': 4,
+                'programa': 5,
+            }
+            #Um for para inserir no excel a informação 
+            for campo_nome, col_num in campos.items():
+                campo_form = f'{campo_nome}_{linha_num}'
+                valor_checkbox = '☑' if request.POST.get(campo_form) == 'on' else ''
+                ws.cell(row=linha_num, column=col_num).value = valor_checkbox
+
+        # Salva em um caminho
+        wb.save(caminho_arquivo)
+
+        return redirect(f'/pagina/{nome_aba}')
+
+
+def checklist(request, nome_aba=None):
+    caminho_base = r'caminho da pasta'
+    caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
+    elementos = []
+    dados = []
+    mensagem = None
+    abas_excel = []
+
+    # Lista todas as pastas do diretório
+    try:
+        for nome in os.listdir(caminho_base):
+            caminho_completo = os.path.join(caminho_base, nome)
+            if os.path.isdir(caminho_completo):
+                elementos.append({'tipo': 'pasta', 'nome': nome})
+    except Exception as e:
+        elementos = [{'tipo': 'erro', 'nome': f"Erro: {str(e)}"}]
+
+    # Verifica e carrega abas do Excel
+    if os.path.exists(caminho_arquivo):
+        try:
+            wb = load_workbook(caminho_arquivo, data_only=True)
+            abas_excel = wb.sheetnames
+
+            if nome_aba:
+                if nome_aba in abas_excel:
+                    aba = wb[nome_aba]
+                        # Itera pelas linhas a partir da 1ª (ou 2ª se quiser pular cabeçalho)
+                    for row in aba.iter_rows(min_row=2, max_col=11):  
+                        linha_num = row[0].row  # pega o número da linha
+                        item = row[1].value
+                        chegada_aco = bool(row[4].value)
+                        programa = bool(row[4].value)
+                        maquina_1 = bool(row[5].value)
+                        maquina_2 = bool(row[6].value)
+                        maquina_3 = bool(row[7].value)
+                        maquina_4 = bool(row[8].value)
+                        maquina_5 = bool(row[9].value)  
+                        maquina_6 = bool(row[10].value)
+                        em_maquina = any([
+                            maquina_1, maquina_2, maquina_3, 
+                            maquina_4, maquina_5, maquina_6
+                        ])
+                        # Força valores booleanos para evitar erros
+                        chegada_aco = bool(row[3].value)
+                        programa = bool(row[4].value)
+
+                        # Lógica para determinar o status customizado
+                        if chegada_aco and programa and not em_maquina:
+                            status_custom = "Pronto para usinar"
+                        elif chegada_aco and programa and em_maquina:
+                            status_custom = "Usinando"
+                        elif chegada_aco and not programa:
+                            status_custom = "Aguardando programa"
+                        elif programa and not chegada_aco:
+                            status_custom = "Aguardando aço"
+                        else:
+                            status_custom = "Indefinido"
+                        dados.append({
+                            'linha': linha_num,
+                            'item': item,
+                            'maquina_1': bool(maquina_1),  
+                            'maquina_2': bool(maquina_2),  
+                            'maquina_3': bool(maquina_3),  
+                            'maquina_4': bool(maquina_4),  
+                            'maquina_5': bool(maquina_5),  
+                            'maquina_6': bool(maquina_6),  
+                            'status_custom': status_custom
+                        })
+                        print(status_custom)
+                else:
+                    mensagem = f"Não apresenta dados do molde '{nome_aba}'."
+        except Exception as e:
+            mensagem = f"Erro ao abrir o Excel: {e}"
+    else:
+        mensagem = "Arquivo moldes.xlsx não encontrado."
+
+    return render(request, 'checklist/checklist.html', {
+        'elementos': elementos,
+        'dados': dados,
+        'aba': nome_aba,
+        'mensagem': mensagem
+    })
+
+def atualizar_status_checklist(request):
+    if request.method == 'POST':
+        nome_aba = request.POST.get('nome_aba')
+        caminho_base = r'caminho da pasta'
+        caminho_arquivo = os.path.join(caminho_base, 'moldes.xlsx')
+        wb = load_workbook(caminho_arquivo)
+        if nome_aba and nome_aba in wb.sheetnames:
+            ws = wb[nome_aba]  # Atualiza na aba correta
+        else:
+            ws = wb.active  # Fallback se algo der errado
+            
+        for row in ws.iter_rows(min_row=2, max_col=11):  # base para pegar linha
+            linha_num = row[0].row
+            #Campos e colunas de cada item
+            campos = {
+                'maquina_1': 6,
+                'maquina_2': 7,
+                'maquina_3': 8,
+                'maquina_4': 9,
+                'maquina_5': 10,
+                'maquina_6': 11,
+            }
+            #Um for para inserir no excel a informação 
+            for campo_nome, col_num in campos.items():
+                campo_form = f'{campo_nome}_{linha_num}'
+                print(campo_form)
+                valor_checkbox = '☑' if request.POST.get(campo_form) == 'on' else ''
+                ws.cell(row=linha_num, column=col_num).value = valor_checkbox
+
+        # Salva em um novo caminho se quiser manter cópia
+        wb.save(caminho_arquivo)
+
+    return redirect(f'/checklist/{nome_aba}')

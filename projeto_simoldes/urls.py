@@ -19,12 +19,17 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-
+from webapp import views 
 from webapp.views import listar_modelos_step, pagina_principal, login, checklist
 
 urlpatterns = [
     path('modelos', listar_modelos_step, name='listar_modelos_step'),
     path('', login, name ='login'),
-    path('pagina_principal', pagina_principal, name='pagina_principal'),
-    path('checklist', checklist, name='checklist')
+    # path('pagina_principal', pagina_principal, name='pagina_principal'),
+    path('checklist', checklist, name='checklist'),
+    path('pagina_principal', views.pagina_principal, name='pagina_principal'),
+    path('atualizar/', views.atualizar_status, name='atualizar_status'),
+    path('atualizar_checklist/', views.atualizar_status_checklist, name='atualizar_status_checklist'),
+    path('pagina/<str:nome_aba>/', views.pagina_principal, name='listar_arquivos_com_aba'),
+    path('checklist/<str:nome_aba>/', views.checklist, name='listar_arquivos_checklist')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)# Vê se a pasta MEDIA existe

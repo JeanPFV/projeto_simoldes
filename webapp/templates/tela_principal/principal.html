@@ -10,7 +10,7 @@
 </head>
 <body>
   <header>
-    <p>Bem-vindo, {{ usuario }}!</p>
+    {% comment %} <p>Bem-vindo, {{ usuario }}!</p>
 
   {% if permissao == 'admin' %}
     <p>Você é administrador. Tem acesso total.</p>
@@ -20,86 +20,81 @@
     <p>Você pode ver modelos 3D e chegada dos aços.</p>
   {% elif permissao == 'nivel_1' %}
     <p>Você pode ver apenas chegada dos aços.</p>
-  {% endif %}
+  {% endif %} {% endcomment %}
   
     <h1>Moldes em Progresso</h1>
-    <img src="static/imagens/Simoldes-Acos-Brasil.png" alt="Simoldes Aços Logo" class="logo">
+    <img src="{% static 'imagens/Simoldes-Acos-Brasil.png' %}" alt="Simoldes Aços Logo" class="logo">
   </header>
 
- <div class="container">
+<div class="container">
   <aside class="sidebar">
     <ul>
-      <li>1678</li>
-      <li>1679</li>
-      <li>1680</li>
-      <li>1681</li>
-      <li>1682</li>
-      <li>1683</li>
+    {% for item in elementos %}
+      <li>
+        {% if item.tipo == 'pasta' %}
+          <a href="{% url 'listar_arquivos_com_aba' nome_aba=item.nome %}"> {{ item.nome }}</a>
+        {% elif item.tipo == 'erro' %}
+          ⚠️ {{ item.nome }}
+        {% endif %}
+      </li>
+    {% endfor %}
     </ul>
   </aside>
 
-  <main class="main-content">
-    <div class="search-bar">
-      <input type="text" placeholder="Pesquisar">
-    </div>
+  <main class="main-content"> 
+    {% if mensagem %}
+      <p style="color: red;"><strong>{{ mensagem }}</strong></p>
+    {% endif %}
 
-    <div class="action-buttons">
-      <button class="green-button">Ver projeto na pasta</button>
-      <a href="/checklist"><button class="green-button">Checklist maquinação</button></a>
-      <button class="green-button save">Salvar alterações</button>
-    </div>
+    {% if dados %}
+    <!-- TABELA DE CHECKBOXES COM FORMULÁRIO DJANGO -->
+      <form method="post" action="{% url 'atualizar_status' %}">
+        {% csrf_token %}
+        <input type="hidden" name="nome_aba" value="{{ aba }}">
+        <div class="action-buttons">
+          <a href="/checklist/{{aba}}">
+            <button type="button" class="green-button">Checklist maquinação</button>
+          </a>
+            <button type="submit" class="green-button save">Salvar Alterações</button>
+        </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th></th>
-          <th>Item</th>
-          <th>Descrição</th>
-          <th>Molde 3D</th>
-          <th>Chegada aço</th>
-          <th>Quantidade aço</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Mesmos dados da tabela anterior -->
-        <tr>
-          <td></td>
-          <td><strong>100</strong></td>
-          <td><strong>CAVIDADE</strong></td>
-          <td class="center">Sim</td>
-          <td class="center">Sim</td>
-          <td class="center">1</td>
-          <td class="ativo">Ativo(a)</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><strong>200</strong></td>
-          <td>PARAFUSO DE CABEÇA<br>CILÍNDRICA COM<br>SEXTAVADO INTERIOR</td>
-          <td class="center">Não</td>
-          <td class="center">Não</td>
-          <td class="center"></td>
-          <td class="ativo">Ativo(a)</td>
-        </tr>
-        <tr>
-          <td><img src="/media/modelos/previews/cylinder_block.jpeg" alt="cilindro" class="zoom-img" width="80" /></td>
-          <td><strong>600B</strong></td>
-          <td>OUTROS</td>
-          <td class="center">Sim</td>
-          <td class="center">Sim</td>
-          <td class="center">1</td>
-          <td class="ativo">Ativo(a)</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><strong>1</strong></td>
-          <td><strong>CAVIDADE</strong></td>
-          <td class="center">Sim</td>
-          <td class="center">Sim</td>
-          <td class="center">1</td>
-          <td class="ativo">Ativo(a)</td>
-        </tr>
-      </tbody>
-    </table>
+        <table>
+          <tr id="cabecalho">
+            <th>Item</th>
+            <th>Imagem</th>
+            <th>Status</th>
+            <th>Chegada Aço</th>
+            <th>Programa</th>
+          </tr>
+
+          {% for dado in dados %}
+          <tr>
+            <td>{{ dado.item }}</td>
+            <td>
+              <img src="/media/modelos/previews/{{ dado.item }}.png" class = "zoom-img" alt="{{ dado.item }}" width="100">
+            </td>
+            
+            <td>{{ dado.status_custom }}</td>
+
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="chegada_aco_{{ dado.linha }}" {% if dado.chegada_aco %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
+
+            <td>
+              <label class="checkbox-container">
+                <input type="checkbox" name="programa_{{ dado.linha }}" {% if dado.programa %}checked{% endif %}>
+                <span class="checkmark"></span>
+              </label>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </form>
+    {% endif %}
   </main>
 </div>
+</body>
+</html>
