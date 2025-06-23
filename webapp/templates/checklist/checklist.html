@@ -53,13 +53,23 @@
     <!-- TABELA DE CHECKBOXES COM FORMULÁRIO DJANGO -->
       <form method="post" action="{% url 'atualizar_status_checklist' %}">
         {% csrf_token %}
-        <input type="hidden" name="nome_aba" value="{{ aba }}">
-        <div class="action-buttons">
-          <a href="/pagina/{{aba}}">
-            <button type="button" class="green-button">Listas de processos</button>
-          </a>
+          <input type="hidden" name="nome_aba" value="{{ aba }}">
+          <div class="action-buttons">
+            <a href="/pagina/{{ aba }}">
+              <button type="button" class="green-button">Listas de processos</button>
+            </a>
+
             <button type="submit" class="green-button save">Salvar Alterações</button>
-        </div>
+          </div>
+
+          {% if messages %}
+            <div id="popup-msg" class="popup">
+              {% for message in messages %}
+                <p class="{{ message.tags }}">{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
 
         <table>
           <tr id="cabecalho">
@@ -127,4 +137,7 @@
   </main>
 </div>
 </body>
+
+  <script src="{% static 'script\message.js' %}"></script>
+
 </html>

@@ -1,6 +1,7 @@
 import os
 from django.conf import settings
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from multiprocessing import Pool, cpu_count
 from .dict import USUARIOS
 from openpyxl import load_workbook
@@ -211,6 +212,7 @@ def atualizar_status(request):
         # Salva em um caminho
         wb.save(caminho_arquivo)
 
+        messages.success(request, 'Mudanças salvas com sucesso.')
         return redirect(f'/pagina/{nome_aba}')
 
 
@@ -324,5 +326,6 @@ def atualizar_status_checklist(request):
 
         # Salva em um novo caminho se quiser manter cópia
         wb.save(caminho_arquivo)
-
+        
+    messages.success(request, 'Mudanças salvas com sucesso.')
     return redirect(f'/checklist/{nome_aba}')

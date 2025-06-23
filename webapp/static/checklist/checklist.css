@@ -200,3 +200,24 @@ th, td {
   transform: scale(3); /* aumenta o tamanho em 6x */
   z-index: 10;
 }
+
+.popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 300px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 15px 20px;
+  border-radius: 5px;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 1;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.popup.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
